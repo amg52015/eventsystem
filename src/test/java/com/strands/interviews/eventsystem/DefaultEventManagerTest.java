@@ -113,7 +113,7 @@ public class DefaultEventManagerTest
     }
     
     /**
-     * A listener of an Event superclass must not be notified of the Event
+     * A listener of an Event superclass must be notified of the Event
      */
     @Test
     public void testListenerOfEventSuperclass()
@@ -121,7 +121,7 @@ public class DefaultEventManagerTest
         EventListenerMock eventListenerMock = new EventListenerMock(new Class[]{SimpleEvent.class});
         eventManager.registerListener("some.key", eventListenerMock);
         eventManager.publishEvent(new SubEvent(this));
-        assertFalse(eventListenerMock.isCalled());
+        assertTrue(eventListenerMock.isCalled());
     }
     
     /**
