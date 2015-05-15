@@ -1,8 +1,10 @@
 package com.strands.interviews.eventsystem;
 
+import com.strands.interviews.eventsystem.events.CreationEvent;
 import com.strands.interviews.eventsystem.events.SimpleEvent;
 import com.strands.interviews.eventsystem.events.SubEvent;
 import com.strands.interviews.eventsystem.impl.DefaultEventManager;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -120,5 +122,24 @@ public class DefaultEventManagerTest
         eventManager.registerListener("some.key", eventListenerMock);
         eventManager.publishEvent(new SubEvent(this));
         assertFalse(eventListenerMock.isCalled());
+    }
+    
+    /**
+     * When a new listener is added, if getHandledEventClasses returns an empty array
+     * it must listen all events  
+     */
+    @Test
+    public void testGlobalListener()
+    {
+        EventListenerMock globalListener1 = new EventListenerMock(new Class[]{});
+        EventListenerMock globalListener2 = new EventListenerMock(new Class[]{});
+        eventManager.registerListener("key1", globalListener1);
+        eventManager.registerListener("key2", globalListener2);
+        eventManager.unregisterListener("key2");
+        eventManager.publishEvent(new SimpleEvent(this));
+        eventManager.publishEvent(new SubEvent(this));
+        eventManager.publishEvent(new CreationEvent(this));
+        assertEquals(3, globalListener1.count);
+        assertFalse(globalListener2.isCalled());
     }
 }
